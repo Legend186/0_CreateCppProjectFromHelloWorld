@@ -132,9 +132,6 @@ sudo systemctl restart nscd.service
 
 ![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_2.png)
 
-The key fingerprint is:
-SHA256:fdfx8ShkiSlTWklbIL3pNhHIY7o780IFElQaFhK1wIo zy@manjaro
-
 之后就会生成两个文件，分别为id_rsa和id_rsa.pub，即密钥`id_rsa`和公钥`id_rsa.pub`。这两个文件，都为隐藏文件，默认生成在以下目录：
 
 ```
@@ -153,12 +150,6 @@ cat id_rsa.pub
 ```
 
 ![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_3.png)
-
-```
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCluNFvnlrUtAR++NHnnG3PGDYIkxS+E77UKz/MaAQeEqpjlsJtFune28gr0WDmOCCvsDMEDlrh7MNmvMO5eInNzCmAxldcMOdeUMTATLg/xtaTxyyYJHrFc8h9a7pLFv2vHnIjf3df1OEkkT6gXY2ZYYqdpbS/cVp53/DdsMyfXj3Du6GZiWrIIZkZAj/f14wrm9qCbrYlK/3f4Ly82h26d3Q10FXBpHYFtjtdE3dCn1C9uBZqySz00yDJVfSSLF0J0L889WssKE3J8w0adFNlwbgpeTTXVaYdNP3AsC5T3ld6keDUj9APztnCGfuOx30d7Q/RIa9BDAL8gn/e6k7IARfZ1h1EGVrqiOtauVq+EKlAsk1Sc1/vatYG02SDCm26sWhB7MpxPlWfOZSc84IkuUsGVlN9jqlLMqSfVDyQRanPOvASX/C7Ds2ilPmEN7uxiFt3BHxudIwrIPQNgR5uTBqac3+Ojq53G5/uteK82xOyTsMjQM7hocMwfp040N8= zy@manjaro
-```
-
-
 
 ### step：添加SSH key
 
