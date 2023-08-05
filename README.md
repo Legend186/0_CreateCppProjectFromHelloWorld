@@ -244,7 +244,7 @@ git add xxx xxx xxx ...
 
 如对文件`README.md`进行了修改
 
-
+![git2github](/home/zy/zyold/04-Projects/picture_src/3_git2github_4.png)
 
 提交代码
 
@@ -264,187 +264,31 @@ git log
 git status
 ```
 
-使用如下命令将本地仓库的内容push到远程仓库。注意：第一次向远程仓库提交代码时，需输入账号和密码进行验证。
+关联远程仓库
 
 ```bash
-git push origin master
-```
-
-### 本地有git仓库且已进行了多次commit操作
-
-本地已经创建了git仓库，并且进行了多次`commit`操作，而在github却是刚刚建了一个仓库
-
-![本地](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/15.git2github_1.png)
-
-![github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/15.git2github_2.png)
-
-
-
-#### 关联远程仓库
-
-```bash
-# 语法
 # git remote add <远程仓库名> <远程仓库的github地址>
 
-git remote add 0_CreateCppProjectFromHelloWorld https://github.com/Legend186/0_CreateCppProjectFromHelloWorld.git
+git remote add 0_CreateCppProjectFromHelloWorld git@github.com:Legend186/0_CreateCppProjectFromHelloWorld.git
 ```
 
-![git2github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/17.git2github.png)
-
-`remote 0_CreateCppProjectFromHelloWorld already exists.`表明本地库已经关联了`0_CreateCppProjectFromHelloWorld`的远程库，可以使用如下命令解决
+若报错`remote 0_CreateCppProjectFromHelloWorld already exists.`表明本地库已经关联了`0_CreateCppProjectFromHelloWorld`的远程库，可以使用如下命令解决
 
 ```bash
 # 删除关联的 0_CreateCppProjectFromHelloWorld 的远程库
 git remote rm 0_CreateCppProjectFromHelloWorld
 
 # 与远程库进行关联，将库名命名为 0_CreateCppProjectFromHelloWorld
-git remote add 0_CreateCppProjectFromHelloWorld https://github.com/Legend186/0_CreateCppProjectFromHelloWorld.git
-
+git remote add 0_CreateCppProjectFromHelloWorld git@github.com:Legend186/0_CreateCppProjectFromHelloWorld.git
 ```
 
-#### 修改本地分支的名字
-
-git的主分支名为`master`，而自2020-10-01开始，github中所有“master分支”一律改名为“main分支”
-
-> GitHub is working on replacing the term “master” on its service with a neutral term like “main” to avoid any unnecessary references to slavery.
-
-因github的仓库中没有**master**这个分支，我们本地的仓库没有**main**分支，会导致`push`时报错：`error: src refspec main does not match any`，为解决此问题，将本地仓库的**master**分支改名为**main**分支即可
-
-```
-git branch -m master main
-```
-
-#### 同步远程仓库和本地仓库
-
-```bash
-git pull 0_CreateCppProjectFromHelloWorld main
-# 注：自2020-10-01开始，github中所有“master分支”一律改名为“main分支”
-```
-
-执行上述代码之后，发生如下报错
-
-![](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/18.git2github.png)
-
-**报错内容**
-
-```bash
-# 报错消息
-From https://github.com/Legend186/0_CreateCppProjectFromHelloWorld
- * branch            main       -> FETCH_HEAD
-hint: You have divergent branches and need to specify how to reconcile them.
-hint: You can do so by running one of the following commands sometime before
-hint: your next pull:
-hint: 
-hint:   git config pull.rebase false  # merge
-hint:   git config pull.rebase true   # rebase
-hint:   git config pull.ff only       # fast-forward only
-hint: 
-hint: You can replace "git config" with "git config --global" to set a default
-hint: preference for all repositories. You can also pass --rebase, --no-rebase,
-hint: or --ff-only on the command line to override the configured default per
-hint: invocation.
-fatal: Need to specify how to reconcile divergent branches.
-
-```
-
-```bash
-# 报错翻译
-From https://github.com/Legend186/0_CreateCppProjectFromHelloWorld
- * branch            main       -> FETCH_HEAD
-提示:您有不同的分支，需要指定如何协调它们。
-提示:您可以通过在之前某个时间运行以下命令之一来做到这一点
-提示:你的下一次pull:
-提示:
-提示:git config pull.rebase false 	# 合并(默认策略)
-提示:git config pull.rebase true  	# Rebase
-提示:git config pull.ff only	 	# 仅快进
-提示:
-提示:可以将“git config”替换为“git config——global”来设置默认值
-提示:首选所有存储库。你也可以传递——rebase，——no-rebase，
-提示:或命令行上的--ff-only，以覆盖配置的默认per
-提示:调用。
-fatal:需要指定如何协调不同的分支。
-
-```
-
-**解决方法**
-
-分析：拉取`pull`分支前，本地进行过`merge`合并更新分支操作，而刚刚新建仓库类似于其他人在之前已经`push`过一个版本，导致版本不一致
-
-可能的解决方法：
-
-- 默认将`pull`下来的代码与现有改动的代码进行合并
-
-  ```bash
-  git config pull.rebase false
-  ```
-
-  但是可能会造成代码冲突，需要处理下这个问题，代码冲突如果2个人都改了同一个文件，需要联系之前`push`的同学，看看这块代码怎么保存
-
-- 先回退到合并之前的代码，再进行`pull`拉取最新代码
-
-  注意：此解决方法仅适用于2个分支之间的合并（`git merge`）操作，比如你是将dev开发分支合并到test分支之前没`pull`，那这时候test分支需要回退到未合并前的版本。test上合并上去的代码将会丢失，等你test分支能成功`pull`后，需要重新合并（`merge`）开发分支dev上的代码合并到test上。所以记得保留dev开发分支这个版本的代码再把test回退到上一个版本，等`pull`成功，再重新在test分支上合并dev分支代码
-
-  ```bash
-  $ git log -2
-  commit b5e912bbe84c4112f5083807716cb08d4134d2d7 (HEAD)
-  Author: Legend186 <2665393356@qq.com>
-  Date:   Sat Aug 5 16:55:20 2023 +0800
-  
-      update the file GitHub.md and README.MD
-  
-  commit 24557633a005df7295fa9bf9545d2a072527803b
-  Author: Legend186 <2665393356@qq.com>
-  Date:   Fri Aug 4 23:32:54 2023 +0800
-  
-      Add tutorial files about git and github
-  
-  ```
-
-  ```bash
-  # 根据历史版本记录，选择commit地址，回退到自己合并之前的版本
-  $ git reset --hard 24557633a005df7295fa9bf9545d2a072527803b
-  
-  # 再进行pull更新分支
-  $ git pull 0_CreateCppProjectFromHelloWorld main
-  
-  # 最后再重新合并代码
-  $ git merge main
-  
-  ```
-
-实际采用的解决办法
-
-```bash
-# 做任何拿不准的操作前，注意先备份
-cp -r 0_CreateCppProjectFromHelloWorld 0_CreateCppProjectFromHelloWorld_20230805
-
-# 将`pull`下来的代码与现有改动的代码进行合并
-git config pull.rebase false
-
-git pull 0_CreateCppProjectFromHelloWorld main
-```
-
-
-
-将要提交的文件添加到本地仓库`0_CreateCppProjectFromHelloWorld`
-
-```bash
-git add xxxxxxx
-git commit -m "xxxxxxx"
-```
-
-将本地仓库修改或添加的内容提交到远程仓库
+使用如下命令将本地仓库的内容push到远程仓库。注意：第一次向远程仓库提交代码时，需输入账号和密码进行验证。
 
 ```bash
 git push 0_CreateCppProjectFromHelloWorld main
 ```
 
-git push过程中**报错**：
-
-![git2github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/19.git2github.png)
-
-这是因为原先的密码凭证从2021年8月13日开始就不能使用，必须使用个人访问令牌（personal access token），即把密码替换成token。
+git push过程中会**报错**：这是因为原先的密码凭证从2021年8月13日开始就不能使用，必须使用个人访问令牌（personal access token），即把密码替换成token。
 
 令牌（token）与基于密码的身份验证相比，令牌提供了许多**安全优势**：
 
@@ -457,23 +301,11 @@ git push过程中**报错**：
 
 - 登录自己的Github账号，在右上角点击头像，在下拉菜单上找到 **Setting**
 
-  ![](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/8.ssh.png)
-
 - 点击左侧栏的**Developer settings**选项
 
-  ![git2github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/20.git2github.png)
-
-- 点击左侧栏上的**Personal access tokens**选项
-
-  ![git2github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/21.git2github.png)
-
-  GitHub 建议尽可能使用 fine-grained personal access token 
-
-  ![git2github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/22.git2github.png)
+- 点击左侧栏上的**Personal access tokens**选项，GitHub 建议尽可能使用 fine-grained personal access token 
 
   一步一步操作，将最终生成的token保存好，因为再次刷新网页的时候，已经没有办法看到它了。
-
-  ![git2github](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/24.git2github.png)
 
 - 使用token
 
@@ -493,30 +325,11 @@ git push过程中**报错**：
 git push 0_CreateCppProjectFromHelloWorld main
 ```
 
-**报错**：
+![](/home/zy/zyold/04-Projects/picture_src/3_git2github_5.png)
 
-![](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/25.git2github.png)
+![](/home/zy/zyold/04-Projects/picture_src/3_git2github_6.png)
 
-尝试执行`git pull 0_CreateCppProjectFromHelloWorld main`
-
-![](/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/picture_src/26.git2github.png)
-
-报错：`fatal: refusing to merge unrelated histories`。出现这个问题的最主要原因还是在于本地仓库和远程仓库实际上是独立的两个仓库。若之前是采用直接clone的方式在本地建立起远程github仓库的克隆本地仓库就不会有这问题了。
-
-解决方式：在后面加上`--allow-unrelated-histories`进行允许合并即可
-
-```bash
-git pull 0_CreateCppProjectFromHelloWorld main--allow-unrelated-histories
-```
-
-提交
-
-```bash
-# 将本地仓库修改或添加的内容提交到远程仓库
-git push 0_CreateCppProjectFromHelloWorld main
-```
-
-
+可以看到同步成功。
 
 ### 良好的git发布流程习惯
 
@@ -525,28 +338,17 @@ git push 0_CreateCppProjectFromHelloWorld main
 git add .			# 将所有新增、修改或删除的文件添加到暂存区
 git commit -m "版本发布" # 将暂存区的文件发版
 git status 			# 查看是否还有文件没有发布上去
-git checkout test	# 切换到要合并的分支
-git pull			# 在test 分支上拉取最新代码，避免冲突
-git merge dev   	# 在test 分支上合并 dev 分支上的代码
-git push			# 上传test分支代码
-
+git checkout xxxxx	# 切换到要合并的分支 xxxxx
+git pull 0_CreateCppProjectFromHelloWorld main			# 在test 分支上拉取最新代码，避免冲突
+git merge main   	# 在 main 分支上合并 xxxxx 分支上的代码
+git push 0_CreateCppProjectFromHelloWorld main	# 上传 main 分支代码
 ```
 
 
 
+#### 本地已有git仓库
 
-
-
-
-
-
-
-
-
-
-## 使用Git进行项目管理
-
-### 创建一个git仓库
+##### 创建一个git仓库
 
 ```bash
 # 创建一个目录
@@ -557,13 +359,15 @@ cd 0_CreateCppProjectFromHelloWorld
 git init
 ```
 
-### 项目目录
+##### 项目目录
 
 ```
 0_CreateCppProjectFromHelloWorld
 ```
 
+[TODO]
 
+# Hello world 项目
 
 ## hello_world_0_origin
 
