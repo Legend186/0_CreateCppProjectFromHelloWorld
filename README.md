@@ -419,8 +419,17 @@ git add hello_world_0_origin
 # 提交
 git commit -m "Release version 1.0.0 The original Hello_world project which has only one file contains the function main."
 
+# 同步远程仓库的main分支
+git pull 0_CreateCppProjectFromHelloWorld main
+
+# push到远程仓库的main分支
+git push 0_CreateCppProjectFromHelloWorld main
+
+
 # 对 当前提交的内容打附注标签
 git tag -a hello_world_0_origin -m "Release version 1.0.0" HEAD
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_0_origin
 
 # 查看所有标签
 git tag -l
