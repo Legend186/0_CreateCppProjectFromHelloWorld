@@ -1385,6 +1385,8 @@ git push 0_CreateCppProjectFromHelloWorld :hello_world_6_gtest
 
 ## 将测试通过的代码合并到main分支
 
+### 合并分支
+
 ```bash
 # 查看当前所属的分支
 git branch
@@ -1411,5 +1413,18 @@ git push 0_CreateCppProjectFromHelloWorld main
 
 ```
 
+### 查看各个branch之间的关系图
 
+```bash
+# 方式一
+git log --graph --decorate --oneline --all
+# --graph：分支图显示
+# --decorate：可显示分支名称
+# --online：日志单行显示
+# --simplify-by-decoration：只显示被branch或tag引用的commit
+# --all：显示所有分支
+
+# 方式二
+gitk --simplify-by-decoration --all
+```
 
