@@ -1045,13 +1045,15 @@ git push 0_CreateCppProjectFromHelloWorld hello_world_5_cmake
 
 在搭建初始的hello_world项目时，遇到耦合严重、后期维护困难、团队合作困难、责任功能划分不清晰等问题时，为此在业务层面进行了**解耦合**，按照各个功能模块责任田划分不同的目录、文件和函数以清晰地划分责任，但随着项目的膨胀，**编译**会比较**复杂**，因此引入了自动化编译工具makefile，但makefile只能在类unix系统上使用，无法在windows系统进行，会导致跨系统编译失败，为解决这个移植问题，引入了cmake。cmake是一个跨平台的C++编译脚本，完美解决了**跨平台构建**的问题，最大化地利用了C++的跨平台特性。
 
-### hello_world_6_test
+## hello_world_6_gtest
 
 项目在开发过程中，如何保证开发的代码是正确的？答案是 **"测试"**，不是开发。任何一个完整的项目都必须引入测试框架，以保证各个模块提供的能力是正确可靠的，并且对这些功能模块实现一个自动化的检测。`googletest` 是当下最流行的 c/c++ 测试框架。通过使用googletest测试框架，还可学到该如何在我们的项目中引入三方库（开源库，合作开发）。
 
-#### GoogleTest
+### GoogleTest
 
 [googletest官网](https://google.github.io/googletest/)
+
+[googletest说明文档](https://google.github.io/googletest/)
 
 [googletest的github仓库](https://github.com/google/googletest)
 
@@ -1070,40 +1072,50 @@ googletest的**优势**：
 - 测试框架应该将测试编写者从琐事中解放出来，让他们专注于测试内容。 GoogleTest 自动跟踪所有定义的测试，不需要用户为了运行它们而进行枚举。
 - 测试高效、快速。GoogleTest 能在测试用例之间复用测试资源，只需支付一次设置/拆分成本，并且不会使测试相互依赖，这样的机制使单元测试更加高效。
 
-#### 引入googletest
+### 引入googletest
+
+熟练掌握 gtest ，并且使用其去开发测试用例，能为我们的项目提前屏蔽很多不必要的问题（尤其项目有一定规模时）。例如：项目迭代过程中，常常会出现修复一个 bug，又引入了多个 bug 的情况，如果此时对应的 api 有完整的测试用例，则可以提前暴露解决上述 bug。一个优秀的开发，必定也是一个好的测试。
 
 ```bash
 # 创建一个 gtest 分支，等测试完毕后再合并到 main 分支
-# 0 查看当前所在分支
+# 0 查看当前状态
 git status
 # 1 因当前在main分支，需保证当前代码与线上同步
 git pull 0_CreateCppProjectFromHelloWorld main
-# 2 新建分支
+# 2 新建分支 gtest
 git branch gtest
-# 3 切换到新建的 gtest 分支上
+# 3 切换到新分支 gtest 上
 git checkout gtest
-# 4 把本地分支推到远端，让远端与本地分支同步，用来后面提交代码
+# 4 把本地分支推到远端，用于后面提交代码
 git push 0_CreateCppProjectFromHelloWorld gtest
 
 # 创建分支并切换到该分支的命令
 git checkout -b gtest
 
+# 查看当前所属分支
+git branch
+
 # 创建目录来存放第三方库
 mkdir thirdpart && cd thirdpart
 
 # 下载 googletest 源码，下载时的版本为 v1.14.0
+# 因clone时一般都是clone的main分支，但由于main分支可能在开发中，导致一些功能并不可用，故建议使用Release版本
 git clone git@github.com:google/googletest.git
-
-
+cd googletest 
+git tag
+q
+git checkout v1.14.0
 ```
 
-##### 项目目录
+### 项目目录
 
 ```
 0_CreateCppProjectFromHelloWorld
 |__hello
 |	|__hello.h
 |	|__hello.cpp
+|	|__hello1.h
+|	|__hello1.cpp
 |	|__CMakeLists.txt
 |
 |__world
@@ -1115,14 +1127,209 @@ git clone git@github.com:google/googletest.git
 |	|__googletest
 |		|__...
 |
+|__tests
+|	|__CMakeLists.txt
+|	|__test_hello.cpp
+|	|__test_world.cpp
+|
 |__build
 |__main.cpp
 |__CMakeLists.txt
 ```
 
+### 源代码
 
+- `CMakeLists.txt`
 
-##### build
+  ```cmake
+  # test/CMakeLists.txt
+  
+  cmake_minimum_required(VERSION 3.27.0)
+  project(test_hello_world)
+  
+  # 将 gtest 添加到项目中
+  # 路径后跟了字符串 googletest，这是因为 googletest 的源码并不是 test 目录的子目录，因此必须为googletest指定一个编译路径
+  # 这是cmake的规则
+  add_subdirectory(${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest googletest)
+  
+  # test_hello **********************
+  # 添加一个可执行程序
+  add_executable(test_hello ${CMAKE_CURRENT_SOURCE_DIR}/test_hello.cpp)
+  # 依赖googletest的头文件
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  # 要测试的是hello模块，因此也依赖hello模块，因此给出hello模块的父目录
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  # 添加依赖库
+  # googletest有两个库：gtest 和 gtest_main
+  target_link_libraries(test_hello PUBLIC hellolib gtest gtest_main)
+  # 把测试添加到框架中去，添加此内容ctest才会有东西输出
+  add_test(NAME test_hello
+           COMMAND test_hello)
+  
+  # test_world **********************
+  add_executable(test_world ${CMAKE_CURRENT_SOURCE_DIR}/test_world.cpp)
+  
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  
+  target_link_libraries(test_world PUBLIC worldlib gtest gtest_main)
+  
+  add_test(NAME test_world
+           COMMAND test_world)
+  
+  ```
+
+- `hello/hello1.h`：为增加测试的丰富性，给hello模块增加了两个需求
+
+  ```c++
+  #ifndef _HELLO1_H_
+  #define _HELLO1_H_
+  
+  int Sum(int a, int b);
+  bool IsOdd(int num);
+  
+  #endif
+  ```
+
+- `hello/hello1.cpp`
+
+  ```c++
+  #include "hello1.h"
+  
+  int Sum(int a, int b)
+  {
+      return a+b;
+  }
+  
+  bool IsOdd(int num)
+  {
+      // 若 num 为偶数，则对2做取余运算的结果为0，返回的取余结果则会被转换为false
+      // 若 num 为基数数，则对2做取余运算的结果不为0，返回的取余结果则会被转换为true
+      return num%2;
+  }
+  ```
+
+- `hello/CMakeLists.txt`
+
+  ```cmake
+  # hello/CMakeLists.txt
+  cmake_minimum_required(VERSION 3.27.0)
+  project(hello)
+  
+  set(HELLO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/hello.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/hello1.cpp)
+  
+  add_library(hellolib SHARED ${HELLO_SRC})
+  ```
+
+- `world/world.cpp`
+
+  ```cmake
+  # world/CMakeLists.txt
+  cmake_minimum_required(VERSION 3.27.0)
+  project(world)
+  
+  set(WORLD_SRC ${CMAKE_CURRENT_SOURCE_DIR}/world.cpp)
+  
+  add_library(worldlib SHARED ${WORLD_SRC})
+  ```
+
+- `tests/CMakeLists.txt`
+
+  ```cmake
+  # test/CMakeLists.txt
+  
+  cmake_minimum_required(VERSION 3.27.0)
+  project(test_hello_world)
+  
+  # 将 gtest 添加到项目中
+  # 路径后跟了字符串 googletest，这是因为 googletest 的源码并不是 test 目录的子目录，因此必须为googletest指定一个编译路径
+  # 这是cmake的规则
+  add_subdirectory(${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest googletest)
+  
+  # 添加一个可执行程序
+  add_executable(test_hello ${CMAKE_CURRENT_SOURCE_DIR}/test_hello.cpp)
+  add_executable(test_world ${CMAKE_CURRENT_SOURCE_DIR}/test_world.cpp)
+  
+  # 依赖googletest的头文件
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  
+  # 要测试的是hello模块，因此也依赖hello模块，因此给出hello模块的父目录
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  
+  # 添加依赖库
+  # googletest有两个库：gtest 和 gtest_main
+  target_link_libraries(test_hello PUBLIC hellolib gtest gtest_main)
+  target_link_libraries(test_world PUBLIC worldlib gtest gtest_main)
+  
+  # 把测试添加到框架中去，添加此内容ctest才会有东西输出
+  add_test(Name test_hello
+           COMMAND test_hello)
+  add_test(Name test_world
+           COMMAND test_world)
+  
+  ```
+
+- `test_hello.cpp`
+
+  ```cpp
+  #include "hello/hello.h"
+  #include "hello/hello1.h"
+  
+  #include "gtest/gtest.h"
+  
+  /*
+  TEST：googletest提供的宏
+  EXPECT_EQ：googletest提供的宏
+  EXPECT_TRUE：googletest提供的宏
+  */
+  
+  /*
+  第一个参数：test suite，可认为是一个大测试类别的划分
+  第二个参数：test name，可认为是一个具体到的某一个用例
+  */
+  TEST(Hello, Hello0)
+  {
+      EXPECT_EQ(0, Hello());
+  }
+  
+  TEST(IsOdd, IsOdd3)
+  {
+      EXPECT_TRUE(IsOdd(3)) << "3 is odd!";
+  }
+  
+  TEST(IsOdd, IsOdd8)
+  {
+      EXPECT_TRUE(!IsOdd(8)) << "8 is not odd!";
+  }
+  
+  TEST(Sum, Sum1_2)
+  {
+      int a = 10;
+      int b = 11;
+      EXPECT_EQ(Sum(a, b), 21);
+      a = 20;
+      b = 23;
+      EXPECT_EQ(Sum(a, b), 43);
+  }
+  ```
+
+- `tests/test_world.cpp`
+
+  ```c++
+  #include "world/world.h"
+  #include "gtest/gtest.h"
+  TEST(World, World0)
+  {
+      EXPECT_EQ(0, World());
+  }
+  ```
+
+  
+
+### build
 
 ```bash
 # 创建编译目录
@@ -1131,11 +1338,80 @@ mkdir build && cd build
 # 执行cmake生成makefile
 cmake ..
 
-# 执行 make
-make
+# 执行 make，开8个线程去编译
+make -j8
 # 编译日志中可看到 gtest 参与到编译中，生成了 libgtest.a 与 libgtest_main.a
+
+# 执行测试用例
+# 方法一：执行 ctest，ctest为cmake的一部分，需依托ctest去运行测试用例，可理解为ctest调用的 make test，可批量运行测试用例
+# 方法二：执行 make test，cmake生成的一些makefile，makefile中的一些目标可运行测试用例
+# 方法三：找到可执行程序直接运行进入 tests 目录，执行 ./test_hello （可查看 gtest 详细日志）
+ctest
+# 查看详细日志
+cat Testing/Temporary/LastTest.log 
 
 # 返回源码目录
 cd ${OLDPWD}
 ```
+
+### git提交
+
+```cmake
+# 将 hello_world_5_cnake 目录纳入到版本控制
+cd 0_CreateCppProjectFromHelloWorld
+git add .
+
+# 提交
+git commit -m "Release version 1.0.6 upload the test files"
+
+# 同步远程仓库的 gtest 分支
+git pull 0_CreateCppProjectFromHelloWorld gtest
+
+# 推送至远程仓库的 gtest 分支
+git push 0_CreateCppProjectFromHelloWorld gtest
+
+# 打附注标签
+git tag -a hello_world_6_gtest -m "Pre release version 1.0.6" HEAD
+
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_6_gtest
+
+# 删除本地标签
+git tag -d hello_world_6_gtest
+
+# 删除远程标签
+git push 0_CreateCppProjectFromHelloWorld :hello_world_6_gtest
+```
+
+## 将测试通过的代码合并到main分支
+
+```bash
+# 查看当前所属的分支
+git branch
+# 当前处于 gtest 分支
+
+# 要把 gtest 分支合并到 main 分支，需先切换到 main 分支
+git checkout main
+# 同步一下 main 分支
+git pull 0_CreateCppProjectFromHelloWorld main
+# 若报错，则使用 git checkout . 进行恢复
+# 当前处于 main 分支，合并 gtest 分支
+git merge gtest
+# 这个时候会出现代码冲突，强制合并为test分支的代码
+# 查看状态，以及出现冲突的文件
+git status
+#
+git checkout gtest <冲突的文件>
+# 强制合并，把冲突的 gtest 代码覆盖到 master 上来
+git checkout gtest <冲突的文件>
+
+# main 分支提交代码
+git add .
+git commit -m "Release 1.0.6 Merge the gtest branch to main branch"
+git push 0_CreateCppProjectFromHelloWorld main
+
+
+```
+
+
 
