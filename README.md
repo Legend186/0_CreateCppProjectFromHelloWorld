@@ -809,7 +809,7 @@ git push 0_CreateCppProjectFromHelloWorld main
 git tag -a hello_world_3_makefile -m "Release version 1.0.3" HEAD
 
 # 将标签推送至远程仓库
-git push 0_CreateCppProjectFromHelloWorld hello_world_3_decoupling
+git push 0_CreateCppProjectFromHelloWorld hello_world_3_makefile
 ```
 
 
@@ -900,16 +900,22 @@ make VERBOSE=1
 ```bash
 # 将 hello_world_4_cnake 目录纳入到版本控制
 cd 0_CreateCppProjectFromHelloWorld
-git add hello_world_4_cmake
-
-# 删除本地标签命令格式
-git tag -d <标签名>
+git add .
 
 # 提交
 git commit -m "Release version 1.0.4 only the root directory has CMakeLists.txt file."
 
+# 同步远程仓库的 main 分支
+git pull 0_CreateCppProjectFromHelloWorld main
+
+# 推送至远程仓库的 main 分支
+git push 0_CreateCppProjectFromHelloWorld main
+
 # 打附注标签
 git tag -a hello_world_4_cmake -m "Release version 1.0.4" HEAD
+
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_4_cmake
 ```
 
 
