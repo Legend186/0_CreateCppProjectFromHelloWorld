@@ -1147,15 +1147,15 @@ git checkout v1.14.0
   add_subdirectory(hello)
   add_subdirectory(world)
   
-  add_executable(${PROJECT_NAME} main.cpp)
+  add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
   
   target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/world)
   
   target_link_libraries(${PROJECT_NAME} PUBLIC hellolib)
   target_link_libraries(${PROJECT_NAME} PUBLIC worldlib)
   
-  # 将 test 目录添加到项目中
-  add_subdirectory(test)
+  # 将 tests 目录添加到项目中
+  add_subdirectory(tests)
   ```
 
 - `hello/hello1.h`：为增加测试的丰富性，给hello模块增加了两个需求
@@ -1201,6 +1201,101 @@ git checkout v1.14.0
   add_library(hellolib SHARED ${HELLO_SRC})
   ```
 
+- `world/world.cpp`
+
+  ```cmake
+  # world/CMakeLists.txt
+  cmake_minimum_required(VERSION 3.27.0)
+  project(world)
+  
+  set(WORLD_SRC ${CMAKE_CURRENT_SOURCE_DIR}/world.cpp)
+  
+  add_library(worldlib SHARED ${WORLD_SRC})
+  ```
+
+- `tests/CMakeLists.txt`
+
+  ```cmake
+  # test/CMakeLists.txt
+  
+  cmake_minimum_required(VERSION 3.27.0)
+  project(test_hello_world)
+  
+  # 将 gtest 添加到项目中
+  # 路径后跟了字符串 googletest，这是因为 googletest 的源码并不是 test 目录的子目录，因此必须为googletest指定一个编译路径
+  # 这是cmake的规则
+  add_subdirectory(${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest googletest)
+  
+  # 添加一个可执行程序
+  add_executable(test_hello ${CMAKE_CURRENT_SOURCE_DIR}/test_hello.cpp)
+  add_executable(test_world ${CMAKE_CURRENT_SOURCE_DIR}/test_world.cpp)
+  
+  # 依赖googletest的头文件
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  
+  # 要测试的是hello模块，因此也依赖hello模块，因此给出hello模块的父目录
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  
+  # 添加依赖库
+  # googletest有两个库：gtest 和 gtest_main
+  target_link_libraries(test_hello PUBLIC hellolib gtest gtest_main)
+  target_link_libraries(test_world PUBLIC worldlib gtest gtest_main)
+  
+  # 把测试添加到框架中去，添加此内容ctest才会有东西输出
+  add_test(Name test_hello
+           COMMAND test_hello)
+  add_test(Name test_world
+           COMMAND test_world)
+  
+  ```
+
+- `test_hello.cpp`
+
+  ```cpp
+  #include "hello/hello.h"
+  #include "hello/hello1.h"
+  
+  #include "gtest/gtest.h"
+  
+  TEST(Hello, Hello0)
+  {
+      EXPECT_EQ(0, Hello());
+  }
+  
+  TEST(IsOdd, IsOdd3)
+  {
+      EXPECT_TRUE(IsOdd(3)) << "3 is not odd!";
+  }
+  
+  TEST(IsOdd, IsOdd8)
+  {
+      EXPECT_TRUE(IsOdd(8)) << "8 is odd!";
+  }
+  
+  TEST(Sum, Sum1_2)
+  {
+      int a = 10;
+      int b = 11;
+      EXPECT_EQ(Sum(a, b), 21);
+      a = 20;
+      b = 23;
+      EXPECT_EQ(Sum(a, b), 43);
+  }
+  ```
+
+- `tests/test_world.cpp`
+
+  ```c++
+  #include "world/world.h"
+  #include "gtest/gtest.h"
+  TEST(World, World0)
+  {
+      EXPECT_EQ(0, World());
+  }
+  ```
+
   
 
 
@@ -1224,6 +1319,9 @@ make
 # 方法一：执行 ctest，ctest为cmake的一部分，需依托ctest去运行测试用例，可理解为ctest调用的 make test
 # 方法二：执行 make test，cmake生成的一些makefile，makefile中的一些目标可运行测试用例
 # 方法三：找到可执行程序直接运行进入 tests 目录，执行 ./test_hello （可查看 gtest 详细日志）
+cd tests
+./test_hello
+./test_world
 
 
 # 返回源码目录
