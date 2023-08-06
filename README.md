@@ -110,13 +110,13 @@ sudo systemctl restart nscd.service
 
 登陆GitHub，新建一个名为`0_CreateCppProjectFromHelloWorld`的仓库
 
-![新建github仓库](/home/zy/zyold/04-Projects/picture_src/1_GithubNewRepo_1.png)
+![新建github仓库](./picture_src/1_GithubNewRepo_1.png)
 
-![新建github仓库](/home/zy/zyold/04-Projects/picture_src/1_GithubNewRepo_2.png)
+![新建github仓库](./picture_src/1_GithubNewRepo_2.png)
 
 如下图，仓库创建成功
 
-![新建github仓库](/home/zy/zyold/04-Projects/picture_src/1_GithubNewRepo_3.png)
+![新建github仓库](./picture_src/1_GithubNewRepo_3.png)
 
 ## 利用 SSH 完成 Git 与 GitHub 的绑定
 
@@ -126,11 +126,11 @@ sudo systemctl restart nscd.service
 
 要想生成SSH key，首先就得先安装 SSH，对于 Linux 和 Mac 系统，其默认是安装 SSH 的。
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_1.png)
+![ssh](./picture_src/2_ssh_1.png)
 
 输入`ssh-keygen -t rsa`命令，表示我们指定 RSA  算法生成密钥，然后敲三次回车键，期间不需要输入密码。
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_2.png)
+![ssh](./picture_src/2_ssh_2.png)
 
 之后就会生成两个文件，分别为id_rsa和id_rsa.pub，即密钥`id_rsa`和公钥`id_rsa.pub`。这两个文件，都为隐藏文件，默认生成在以下目录：
 
@@ -149,29 +149,29 @@ ls
 cat id_rsa.pub
 ```
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_3.png)
+![ssh](./picture_src/2_ssh_3.png)
 
 ### step：添加SSH key
 
 进入github主页，点击右上角个人头像，点击settings
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_4.png)
+![ssh](./picture_src/2_ssh_4.png)
 
 击SSH and GPG Keys进入如下界面，然后点击New SSH key按钮
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_5.png)
+![ssh](./picture_src/2_ssh_5.png)
 
 只需要将公钥`id_rsa.pub`的内容粘贴到Key处的位置（Titles的内容不填写也没事），然后点击`Add SSH key` 即可。
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_6.png)
+![ssh](./picture_src/2_ssh_6.png)
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_7.png)
+![ssh](./picture_src/2_ssh_7.png)
 
 ### step3：验证绑定是否成功
 
 在添加完SSH key之后，也没有明确的通知告诉我们绑定成功啊！可通过在终端中输入`ssh -T git@github.com`进行测试：
 
-![ssh](/home/zy/zyold/04-Projects/picture_src/2_ssh_8.png)
+![ssh](./picture_src/2_ssh_8.png)
 
 此时已经完成了本地Git与远程GitHub的绑定，可通过Git向GitHub提交代码了。
 
@@ -205,7 +205,7 @@ cat id_rsa.pub
 
 首先进入个人主页，点击`0_CreateCppProjectFromHelloWold`，进入`0_CreateCppProjectFromHelloWold`项目后，复制项目链接
 
-![git2github](/home/zy/zyold/04-Projects/picture_src/3_git2github_1.png)
+![git2github](./picture_src/3_git2github_1.png)
 
 创建存放此项目的本地目录，使用`clone`命令将github上的项目复制到本地
 
@@ -213,7 +213,7 @@ cat id_rsa.pub
 git clone git@github.com:Legend186/0_CreateCppProjectFromHelloWorld.git
 ```
 
-![git2github](/home/zy/zyold/04-Projects/picture_src/3_git2github_2.png)
+![git2github](./picture_src/3_git2github_2.png)
 
 复制成功后，查看仓库状态
 
@@ -221,7 +221,7 @@ git clone git@github.com:Legend186/0_CreateCppProjectFromHelloWorld.git
 git status
 ```
 
-![git2github](/home/zy/zyold/04-Projects/picture_src/3_git2github_3.png)
+![git2github](./picture_src/3_git2github_3.png)
 
 在真正提交代码前，需要先对要提交的文件进行追踪
 
@@ -235,7 +235,7 @@ git add xxx xxx xxx ...
 
 如对文件`README.md`进行了修改
 
-![git2github](/home/zy/zyold/04-Projects/picture_src/3_git2github_4.png)
+![git2github](./picture_src/3_git2github_4.png)
 
 提交代码
 
@@ -316,9 +316,9 @@ git push过程中会**报错**：这是因为原先的密码凭证从2021年8月
 git push 0_CreateCppProjectFromHelloWorld main
 ```
 
-![](/home/zy/zyold/04-Projects/picture_src/3_git2github_5.png)
+![](./picture_src/3_git2github_5.png)
 
-![](/home/zy/zyold/04-Projects/picture_src/3_git2github_6.png)
+![](./picture_src/3_git2github_6.png)
 
 可以看到同步成功。
 
@@ -1045,5 +1045,5 @@ git push 0_CreateCppProjectFromHelloWorld hello_world_5_cmake
 
 ## 回顾
 
-在搭建初始的hello_world项目时，遇到耦合严重、后期维护困难、团队合作困难、责任功能划分不清晰等问题时，为此在业务层面进行了解耦合，按照各个功能模块责任田划分不同的目录、文件和函数以清晰地划分责任，但随着项目的膨胀，编译会比较复杂，因此引入了自动化编译工具makefile，但makefile只能在类unix系统上使用，无法在windows系统进行，会导致跨系统编译失败，为解决这个移植问题，引入了cmake。cmake是一个跨平台的C++编译脚本，完美解决了跨平台构建的问题，最大化地利用了C++的跨平台特性
+在搭建初始的hello_world项目时，遇到耦合严重、后期维护困难、团队合作困难、责任功能划分不清晰等问题时，为此在业务层面进行了**解耦合**，按照各个功能模块责任田划分不同的目录、文件和函数以清晰地划分责任，但随着项目的膨胀，**编译**会比较**复杂**，因此引入了自动化编译工具makefile，但makefile只能在类unix系统上使用，无法在windows系统进行，会导致跨系统编译失败，为解决这个移植问题，引入了cmake。cmake是一个跨平台的C++编译脚本，完美解决了**跨平台构建**的问题，最大化地利用了C++的跨平台特性。
 
