@@ -1045,13 +1045,15 @@ git push 0_CreateCppProjectFromHelloWorld hello_world_5_cmake
 
 在搭建初始的hello_world项目时，遇到耦合严重、后期维护困难、团队合作困难、责任功能划分不清晰等问题时，为此在业务层面进行了**解耦合**，按照各个功能模块责任田划分不同的目录、文件和函数以清晰地划分责任，但随着项目的膨胀，**编译**会比较**复杂**，因此引入了自动化编译工具makefile，但makefile只能在类unix系统上使用，无法在windows系统进行，会导致跨系统编译失败，为解决这个移植问题，引入了cmake。cmake是一个跨平台的C++编译脚本，完美解决了**跨平台构建**的问题，最大化地利用了C++的跨平台特性。
 
-### hello_world_6_test
+### hello_world_6_gtest
 
 项目在开发过程中，如何保证开发的代码是正确的？答案是 **"测试"**，不是开发。任何一个完整的项目都必须引入测试框架，以保证各个模块提供的能力是正确可靠的，并且对这些功能模块实现一个自动化的检测。`googletest` 是当下最流行的 c/c++ 测试框架。通过使用googletest测试框架，还可学到该如何在我们的项目中引入三方库（开源库，合作开发）。
 
 #### GoogleTest
 
 [googletest官网](https://google.github.io/googletest/)
+
+[googletest说明文档](https://google.github.io/googletest/)
 
 [googletest的github仓库](https://github.com/google/googletest)
 
@@ -1071,6 +1073,8 @@ googletest的**优势**：
 - 测试高效、快速。GoogleTest 能在测试用例之间复用测试资源，只需支付一次设置/拆分成本，并且不会使测试相互依赖，这样的机制使单元测试更加高效。
 
 #### 引入googletest
+
+熟练掌握 gtest ，并且使用其去开发测试用例，能为我们的项目提前屏蔽很多不必要的问题（尤其项目有一定规模时）。例如：项目迭代过程中，常常会出现修复一个 bug，又引入了多个 bug 的情况，如果此时对应的 api 有完整的测试用例，则可以提前暴露解决上述 bug。一个优秀的开发，必定也是一个好的测试。
 
 ```bash
 # 创建一个 gtest 分支，等测试完毕后再合并到 main 分支
@@ -1107,6 +1111,8 @@ git checkout v1.14.0
 |__hello
 |	|__hello.h
 |	|__hello.cpp
+|	|__hello1.h
+|	|__hello1.cpp
 |	|__CMakeLists.txt
 |
 |__world
@@ -1130,7 +1136,12 @@ git checkout v1.14.0
   ```cmake
   # CMakeLists.txt
   cmake_minimum_required(VERSION 3.27.0)
-  project(hello_world_5_cmake)
+  project(hello_world_6_gtest)
+  
+  # 开启测试用例，让cmake支持测试
+  enable_testing()
+  
+  set(HELLO_WORLD_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
   
   # 添加需要 编译CMakeList.txt 的子文件夹
   add_subdirectory(hello)
@@ -1143,8 +1154,51 @@ git checkout v1.14.0
   target_link_libraries(${PROJECT_NAME} PUBLIC hellolib)
   target_link_libraries(${PROJECT_NAME} PUBLIC worldlib)
   
-  # 将 gtest 添加到项目中，因googletest也是采用CMakeLists.txt编译的，故可像引入hello一样引入googletest
-  add_subdirectory(thirdpart/googletest)
+  # 将 test 目录添加到项目中
+  add_subdirectory(test)
+  ```
+
+- `hello/hello1.h`：为增加测试的丰富性，给hello模块增加了两个需求
+
+  ```c++
+  #ifndef _HELLO1_H_
+  #define _HELLO1_H_
+  
+  int Sum(int a, int b);
+  bool IsOdd(int num);
+  
+  #endif
+  ```
+
+- `hello/hello1.cpp`
+
+  ```c++
+  #include "hello1.h"
+  
+  int Sum(int a, int b)
+  {
+      return a+b;
+  }
+  
+  bool IsOdd(int num)
+  {
+      // 若 num 为偶数，则对2做取余运算的结果为0，返回的取余结果则会被转换为false
+      // 若 num 为基数数，则对2做取余运算的结果不为0，返回的取余结果则会被转换为true
+      return num%2;
+  }
+  ```
+
+- `hello/CMakeLists.txt`
+
+  ```cmake
+  # hello/CMakeLists.txt
+  cmake_minimum_required(VERSION 3.27.0)
+  project(hello)
+  
+  set(HELLO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/hello.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/hello1.cpp)
+  
+  add_library(hellolib SHARED ${HELLO_SRC})
   ```
 
   
@@ -1165,6 +1219,12 @@ cmake ..
 # 执行 make
 make
 # 编译日志中可看到 gtest 参与到编译中，生成了 libgtest.a 与 libgtest_main.a
+
+# 执行测试用例
+# 方法一：执行 ctest，ctest为cmake的一部分，需依托ctest去运行测试用例，可理解为ctest调用的 make test
+# 方法二：执行 make test，cmake生成的一些makefile，makefile中的一些目标可运行测试用例
+# 方法三：找到可执行程序直接运行进入 tests 目录，执行 ./test_hello （可查看 gtest 详细日志）
+
 
 # 返回源码目录
 cd ${OLDPWD}
