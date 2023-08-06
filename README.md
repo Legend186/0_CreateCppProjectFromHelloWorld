@@ -794,16 +794,22 @@ make
 ```bash
 # 将 hello_world_3_makefile 目录纳入到版本控制
 cd 0_CreateCppProjectFromHelloWorld
-git add hello_world_3_makefile
-
-# 删除本地标签命令格式
-git tag -d <标签名>
+git add .
 
 # 提交
 git commit -m "Release version 1.0.3 use the tool——makefile to compile the project"
 
-# 打附注标签
+# 同步远程仓库的main分支
+git pull 0_CreateCppProjectFromHelloWorld main
+
+# push到远程仓库的main分支
+git push 0_CreateCppProjectFromHelloWorld main
+
+# 对 当前提交的内容打附注标签
 git tag -a hello_world_3_makefile -m "Release version 1.0.3" HEAD
+
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_3_decoupling
 ```
 
 
