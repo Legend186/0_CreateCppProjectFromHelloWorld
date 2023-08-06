@@ -1401,7 +1401,7 @@ git merge gtest
 # 查看状态，以及出现冲突的文件
 git status
 # 强制合并，把冲突的 gtest 代码覆盖到 master 上来
-git checkout gtest README.md third
+git checkout gtest README.md thirdpart/
 
 # main 分支提交代码
 git add .
