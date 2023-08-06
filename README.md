@@ -1124,6 +1124,11 @@ git checkout v1.14.0
 |	|__googletest
 |		|__...
 |
+|__tests
+|	|__CMakeLists.txt
+|	|__test_hello.cpp
+|	
+|
 |__build
 |__main.cpp
 |__CMakeLists.txt
