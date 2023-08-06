@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.27.0)
 project(hello_world_6_gtest)
 
-# 开启测试用例，让cmake支持测试
+# 开启测试用例，让cmake支持测试，且要以 ctest 或 cmake test 方式来运行测试用例
 enable_testing()
 
 set(HELLO_WORLD_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})

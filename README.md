@@ -1259,6 +1259,16 @@ git checkout v1.14.0
   
   #include "gtest/gtest.h"
   
+  /*
+  TEST：googletest提供的宏
+  EXPECT_EQ：googletest提供的宏
+  EXPECT_TRUE：googletest提供的宏
+  */
+  
+  /*
+  第一个参数：可认为是一个大测试类别的划分
+  第二个参数：可认为是一个具体到的某一个用例
+  */
   TEST(Hello, Hello0)
   {
       EXPECT_EQ(0, Hello());
@@ -1266,12 +1276,12 @@ git checkout v1.14.0
   
   TEST(IsOdd, IsOdd3)
   {
-      EXPECT_TRUE(IsOdd(3)) << "3 is not odd!";
+      EXPECT_TRUE(IsOdd(3)) << "3 is odd!";
   }
   
   TEST(IsOdd, IsOdd8)
   {
-      EXPECT_TRUE(IsOdd(8)) << "8 is odd!";
+      EXPECT_TRUE(!IsOdd(8)) << "8 is not odd!";
   }
   
   TEST(Sum, Sum1_2)
@@ -1298,10 +1308,6 @@ git checkout v1.14.0
 
   
 
-
-
-
-
 ##### build
 
 ```bash
@@ -1326,5 +1332,28 @@ cd tests
 
 # 返回源码目录
 cd ${OLDPWD}
+```
+
+##### git提交
+
+```cmake
+# 将 hello_world_5_cnake 目录纳入到版本控制
+cd 0_CreateCppProjectFromHelloWorld
+git add .
+
+# 提交
+git commit -m "Release version 1.0.6 upload the test files"
+
+# 同步远程仓库的 gtest 分支
+git pull 0_CreateCppProjectFromHelloWorld gtest
+
+# 推送至远程仓库的 gtest 分支
+git push 0_CreateCppProjectFromHelloWorld gtest
+
+# 打附注标签
+git tag -a hello_world_6_gtest -m "Pre release version 1.0.6" HEAD
+
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_6_gtest
 ```
 

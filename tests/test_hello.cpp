@@ -10,12 +10,13 @@ TEST(Hello, Hello0)
 
 TEST(IsOdd, IsOdd3)
 {
-    EXPECT_TRUE(IsOdd(3)) << "3 is not odd!";
+    EXPECT_TRUE(IsOdd(3)) << "3 is odd!";
 }
 
+// 反案例
 TEST(IsOdd, IsOdd8)
 {
-    EXPECT_TRUE(IsOdd(8)) << "8 is odd!";
+    EXPECT_TRUE(!IsOdd(8)) << "8 is not odd!";
 }
 
 TEST(Sum, Sum1_2)
