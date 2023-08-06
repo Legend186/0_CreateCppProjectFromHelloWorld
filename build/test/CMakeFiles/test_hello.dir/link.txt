@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/test_hello.dir/test_hello.cpp.o -o test_hello  -Wl,-rpath,/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/build/hello ../hello/libhellolib.so ../lib/libgtest.a ../lib/libgtest_main.a ../lib/libgtest.a 

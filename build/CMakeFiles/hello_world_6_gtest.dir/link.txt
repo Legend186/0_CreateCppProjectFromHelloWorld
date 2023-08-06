@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/hello_world_6_gtest.dir/main.cpp.o -o hello_world_6_gtest  -Wl,-rpath,/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/build/hello:/home/zy/zyold/04-Projects/01-Cpp/0_CreateCppProjectFromHelloWorld/build/world hello/libhellolib.so world/libworldlib.so 
