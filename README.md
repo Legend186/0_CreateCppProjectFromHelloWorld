@@ -1400,10 +1400,8 @@ git merge gtest
 # 这个时候会出现代码冲突，强制合并为test分支的代码
 # 查看状态，以及出现冲突的文件
 git status
-#
-git checkout gtest <冲突的文件>
 # 强制合并，把冲突的 gtest 代码覆盖到 master 上来
-git checkout gtest <冲突的文件>
+git checkout gtest README.md third
 
 # main 分支提交代码
 git add .
