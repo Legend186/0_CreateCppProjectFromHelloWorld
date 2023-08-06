@@ -11,7 +11,7 @@ set(HELLO_WORLD_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(hello)
 add_subdirectory(world)
 
-add_executable(${PROJECT_NAME} {CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/world)
 
