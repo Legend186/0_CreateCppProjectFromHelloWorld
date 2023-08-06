@@ -1041,9 +1041,88 @@ git tag -a hello_world_5_cmake -m "Release version 1.0.5" HEAD
 git push 0_CreateCppProjectFromHelloWorld hello_world_5_cmake
 ```
 
-
-
-## 回顾
+## 开发过程回顾
 
 在搭建初始的hello_world项目时，遇到耦合严重、后期维护困难、团队合作困难、责任功能划分不清晰等问题时，为此在业务层面进行了**解耦合**，按照各个功能模块责任田划分不同的目录、文件和函数以清晰地划分责任，但随着项目的膨胀，**编译**会比较**复杂**，因此引入了自动化编译工具makefile，但makefile只能在类unix系统上使用，无法在windows系统进行，会导致跨系统编译失败，为解决这个移植问题，引入了cmake。cmake是一个跨平台的C++编译脚本，完美解决了**跨平台构建**的问题，最大化地利用了C++的跨平台特性。
+
+### hello_world_6_test
+
+项目在开发过程中，如何保证开发的代码是正确的？答案是 **"测试"**，不是开发。任何一个完整的项目都必须引入测试框架，以保证各个模块提供的能力是正确可靠的，并且对这些功能模块实现一个自动化的检测。`googletest` 是当下最流行的 c/c++ 测试框架。通过使用googletest测试框架，还可学到该如何在我们的项目中引入三方库（开源库，合作开发）。
+
+#### GoogleTest
+
+[googletest官网](https://google.github.io/googletest/)
+
+[googletest的github仓库](https://github.com/google/googletest)
+
+[参考_知乎](https://zhuanlan.zhihu.com/p/544491071)
+
+**GoogleTest**：简称 GTest，是 Google 开源的一个跨平台的（Liunx、Mac OS X、Windows等）的 C++ 单元测试框架，可以帮助程序员测试 C++ 程序的结果预期。不仅如此，它还提供了丰富的断言、致命和非致命判断、参数化、”死亡测试”等等。
+
+**单元测试**：unit testing，是指对软件中的最小可测试单元进行检查和验证。至于单元的大小或范围，并没有一个明确的标准，单元可以是一个函数、方法、类、功能模块或者子系统。单元测试通常和**白盒测试**联系到一起，如果单从概念上来讲两者是有区别的，不过我们通常所说的单元测试和白盒测试都认为是和代码有关系的，所以在某些语境下也通常认为这两者是同一个东西。还有一种理解方式，单元测试和白盒测试就是对开发人员所编写的代码进行测试。
+
+googletest的**优势**：
+
+- 测试是独立的和可重复的。GoogleTest 使每个测试用例运行在不同的对象上，从而使测试之间相互独立。当测试失败时，GoogleTest 允许单独运行它以进行快速调试。
+- 测试有良好的组织，可以反映被测试代码的结构。 GoogleTest 将相关测试划分到一个测试组内，组内的测试能共享数据，使测试易于维护。
+- 测试是可移植的和可重复使用的。 与平台无关的代码，其测试代码也应该和平台无关，GoogleTest 能在不同的操作系统下工作，并且支持不同的编译器。
+- 当测试用例执行失败时，提供尽可能多的有效信息，以便定位问题。 GoogleTest 不会在第一次测试失败时停止。相反，它只会停止当前测试并继续下一个测试。还可以设置报告非致命故障的测试，然后继续当前测试。因此，您可以在单个运行-编辑-编译周期中检测和修复多个错误。
+- 测试框架应该将测试编写者从琐事中解放出来，让他们专注于测试内容。 GoogleTest 自动跟踪所有定义的测试，不需要用户为了运行它们而进行枚举。
+- 测试高效、快速。GoogleTest 能在测试用例之间复用测试资源，只需支付一次设置/拆分成本，并且不会使测试相互依赖，这样的机制使单元测试更加高效。
+
+#### 引入googletest
+
+```bash
+# 创建目录来存放第三方库
+mkdir thirdpart && cd thirdpart
+
+# 下载 googletest 源码，下载时的版本为 v1.14.0
+git clone git@github.com:google/googletest.git
+
+# 创建一个 gtest 分支，等测试完毕后再合并到 main 分支
+# 1 因当前在main分支，需保证当前代码与线上同步
+git pull 0_CreateCppProjectFromHelloWorld mai
+```
+
+##### 项目目录
+
+```
+0_CreateCppProjectFromHelloWorld
+|__hello
+|	|__hello.h
+|	|__hello.cpp
+|	|__CMakeLists.txt
+|
+|__world
+|	|__world.h
+|	|__world.cpp
+|	|__CMakeLists.txt
+|
+|__thirdpart
+|	|__googletest
+|		|__...
+|
+|__build
+|__main.cpp
+|__CMakeLists.txt
+```
+
+
+
+##### build
+
+```bash
+# 创建编译目录
+mkdir build && cd build
+
+# 执行cmake生成makefile
+cmake ..
+
+# 执行 make
+make
+# 编译日志中可看到 gtest 参与到编译中，生成了 libgtest.a 与 libgtest_main.a
+
+# 返回源码目录
+cd ${OLDPWD}
+```
 
