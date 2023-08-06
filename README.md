@@ -1134,28 +1134,41 @@ git checkout v1.14.0
 - `CMakeLists.txt`
 
   ```cmake
-  # CMakeLists.txt
+  # test/CMakeLists.txt
+  
   cmake_minimum_required(VERSION 3.27.0)
-  project(hello_world_6_gtest)
+  project(test_hello_world)
   
-  # 开启测试用例，让cmake支持测试
-  enable_testing()
+  # 将 gtest 添加到项目中
+  # 路径后跟了字符串 googletest，这是因为 googletest 的源码并不是 test 目录的子目录，因此必须为googletest指定一个编译路径
+  # 这是cmake的规则
+  add_subdirectory(${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest googletest)
   
-  set(HELLO_WORLD_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+  # test_hello **********************
+  # 添加一个可执行程序
+  add_executable(test_hello ${CMAKE_CURRENT_SOURCE_DIR}/test_hello.cpp)
+  # 依赖googletest的头文件
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  # 要测试的是hello模块，因此也依赖hello模块，因此给出hello模块的父目录
+  target_include_directories(test_hello PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
+  # 添加依赖库
+  # googletest有两个库：gtest 和 gtest_main
+  target_link_libraries(test_hello PUBLIC hellolib gtest gtest_main)
+  # 把测试添加到框架中去，添加此内容ctest才会有东西输出
+  add_test(NAME test_hello
+           COMMAND test_hello)
   
-  # 添加需要 编译CMakeList.txt 的子文件夹
-  add_subdirectory(hello)
-  add_subdirectory(world)
+  # test_world **********************
+  add_executable(test_world ${CMAKE_CURRENT_SOURCE_DIR}/test_world.cpp)
   
-  add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)
+  target_include_directories(test_world PUBLIC ${HELLO_WORLD_PROJECT_ROOT})
   
-  target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/world)
+  target_link_libraries(test_world PUBLIC worldlib gtest gtest_main)
   
-  target_link_libraries(${PROJECT_NAME} PUBLIC hellolib)
-  target_link_libraries(${PROJECT_NAME} PUBLIC worldlib)
+  add_test(NAME test_world
+           COMMAND test_world)
   
-  # 将 tests 目录添加到项目中
-  add_subdirectory(tests)
   ```
 
 - `hello/hello1.h`：为增加测试的丰富性，给hello模块增加了两个需求
@@ -1266,8 +1279,8 @@ git checkout v1.14.0
   */
   
   /*
-  第一个参数：可认为是一个大测试类别的划分
-  第二个参数：可认为是一个具体到的某一个用例
+  第一个参数：test suite，可认为是一个大测试类别的划分
+  第二个参数：test name，可认为是一个具体到的某一个用例
   */
   TEST(Hello, Hello0)
   {
@@ -1317,18 +1330,17 @@ mkdir build && cd build
 # 执行cmake生成makefile
 cmake ..
 
-# 执行 make
-make
+# 执行 make，开8个线程去编译
+make -j8
 # 编译日志中可看到 gtest 参与到编译中，生成了 libgtest.a 与 libgtest_main.a
 
 # 执行测试用例
-# 方法一：执行 ctest，ctest为cmake的一部分，需依托ctest去运行测试用例，可理解为ctest调用的 make test
+# 方法一：执行 ctest，ctest为cmake的一部分，需依托ctest去运行测试用例，可理解为ctest调用的 make test，可批量运行测试用例
 # 方法二：执行 make test，cmake生成的一些makefile，makefile中的一些目标可运行测试用例
 # 方法三：找到可执行程序直接运行进入 tests 目录，执行 ./test_hello （可查看 gtest 详细日志）
-cd tests
-./test_hello
-./test_world
-
+ctest
+# 查看xian x
+cat Testing/Temporary/LastTest.log 
 
 # 返回源码目录
 cd ${OLDPWD}
