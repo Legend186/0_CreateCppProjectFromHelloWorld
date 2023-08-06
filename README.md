@@ -414,7 +414,7 @@ g++ -o hello_world_0_origin main.cpp
 ```bash
 # 将 hello_world_0_origin 路径及其下的内容纳入版本控制
 cd 0_CreateCppProjectFromHelloWorld
-git add hello_world_0_origin
+git add .
 
 # 提交
 git commit -m "Release version 1.0.0 The original Hello_world project which has only one file contains the function main."
@@ -517,7 +517,7 @@ g++ -o hello_world_1_decoupling main.cpp
 ```bash
 # 将 hello_world_1_decoupling 目录纳入到版本控制
 cd 0_CreateCppProjectFromHelloWorld
-git .
+git add.
 
 # 提交
 git commit -m "Release version 1.0.1 The second Hello_world project which has only one file but contains 2 functions besides the main function."
@@ -700,17 +700,21 @@ g++ -o hello_world_2_decoupling main.o hello.o world.o
 ```bash
 # 将 hello_world_1_decoupling 目录纳入到版本控制
 cd 0_CreateCppProjectFromHelloWorld
-git add hello_world_2_decoupling
-
-# 删除本地标签命令格式
-git tag -d <标签名>
+git add .
 
 # 提交
 git commit -m "Release version 1.0.2 The second Hello_world project which has the two new file paths and each path only contains the files which only realize one function"
 
-# 打附注标签
-git tag -a hello_world_2_decoupling -m "Release version 1.0.2" HEAD
+# 同步远程仓库的main分支
+git pull 0_CreateCppProjectFromHelloWorld main
 
+# push到远程仓库的main分支
+git push 0_CreateCppProjectFromHelloWorld main
+
+# 对 当前提交的内容打附注标签
+git tag -a hello_world_2_decoupling -m "Release version 1.0.2" HEAD
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_2_decoupling
 ```
 
 
