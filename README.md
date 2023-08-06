@@ -1092,6 +1092,9 @@ git push 0_CreateCppProjectFromHelloWorld gtest
 # 创建分支并切换到该分支的命令
 git checkout -b gtest
 
+# 查看当前所属分支
+git b ran ch
+
 # 创建目录来存放第三方库
 mkdir thirdpart && cd thirdpart
 
