@@ -9,7 +9,7 @@ project(test_hello)
 add_subdirectory(${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest googletest)
 
 # 添加一个可执行程序
-add_executable(test_hello ${CMAKE_CURRENT_SOURCE_DIR}/test_hello.cpp)
+add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/test_hello.cpp)
 
 # 依赖googletest的头文件
 target_include_directories(${PROJECT_NAME} PUBLIC ${HELLO_WORLD_PROJECT_ROOT}/thirdpart/googletest/googletest/include)

@@ -11,12 +11,12 @@ set(HELLO_WORLD_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(hello)
 add_subdirectory(world)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} {CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/world)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC hellolib)
 target_link_libraries(${PROJECT_NAME} PUBLIC worldlib)
 
-# 将 test 目录添加到项目中
-add_subdirectory(test)
+# 将 tests 目录添加到项目中
+add_subdirectory(tests)
