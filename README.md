@@ -1023,17 +1023,22 @@ make
 ```bash
 # 将 hello_world_5_cnake 目录纳入到版本控制
 cd 0_CreateCppProjectFromHelloWorld
-git add hello_world_5_cmake
-
-
-# 删除本地标签命令格式
-git tag -d <标签名>
+git add .
 
 # 提交
 git commit -m "Release version 1.0.5 each directory which has .cpp file has their only CMakeLists.txt file."
 
+# 同步远程仓库的 main 分支
+git pull 0_CreateCppProjectFromHelloWorld main
+
+# 推送至远程仓库的 main 分支
+git push 0_CreateCppProjectFromHelloWorld main
+
 # 打附注标签
 git tag -a hello_world_5_cmake -m "Release version 1.0.5" HEAD
+
+# 将标签推送至远程仓库
+git push 0_CreateCppProjectFromHelloWorld hello_world_5_cmake
 ```
 
 
