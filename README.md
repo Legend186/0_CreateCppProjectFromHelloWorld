@@ -1092,9 +1092,12 @@ git checkout -b gtest
 mkdir thirdpart && cd thirdpart
 
 # 下载 googletest 源码，下载时的版本为 v1.14.0
+# 因clone时一般都是clone的main分支，但由于main分支可能在开发中，导致一些功能并不可用，故建议使用Release版本
 git clone git@github.com:google/googletest.git
-
-
+cd googletest 
+git tag
+q
+git checkout v1.14.0
 ```
 
 ##### 项目目录
@@ -1119,6 +1122,34 @@ git clone git@github.com:google/googletest.git
 |__main.cpp
 |__CMakeLists.txt
 ```
+
+##### 源代码
+
+- `CMakeLists.txt`
+
+  ```cmake
+  # CMakeLists.txt
+  cmake_minimum_required(VERSION 3.27.0)
+  project(hello_world_5_cmake)
+  
+  # 添加需要 编译CMakeList.txt 的子文件夹
+  add_subdirectory(hello)
+  add_subdirectory(world)
+  
+  add_executable(${PROJECT_NAME} main.cpp)
+  
+  target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/world)
+  
+  target_link_libraries(${PROJECT_NAME} PUBLIC hellolib)
+  target_link_libraries(${PROJECT_NAME} PUBLIC worldlib)
+  
+  # 将 gtest 添加到项目中，因googletest也是采用CMakeLists.txt编译的，故可像引入hello一样引入googletest
+  add_subdirectory(thirdpart/googletest)
+  ```
+
+  
+
+
 
 
 
