@@ -1339,7 +1339,7 @@ make -j8
 # 方法二：执行 make test，cmake生成的一些makefile，makefile中的一些目标可运行测试用例
 # 方法三：找到可执行程序直接运行进入 tests 目录，执行 ./test_hello （可查看 gtest 详细日志）
 ctest
-# 查看xian x
+# 查看详细日志
 cat Testing/Temporary/LastTest.log 
 
 # 返回源码目录
@@ -1367,5 +1367,11 @@ git tag -a hello_world_6_gtest -m "Pre release version 1.0.6" HEAD
 
 # 将标签推送至远程仓库
 git push 0_CreateCppProjectFromHelloWorld hello_world_6_gtest
+
+# 删除本地标签
+git tag -d hello_world_6_gtest
+
+# 删除远程标签
+git push 0_CreateCppProjectFromHelloWorld :hello_world_6_gtest
 ```
 
