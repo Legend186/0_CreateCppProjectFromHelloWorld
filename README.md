@@ -1073,15 +1073,28 @@ googletest的**优势**：
 #### 引入googletest
 
 ```bash
+# 创建一个 gtest 分支，等测试完毕后再合并到 main 分支
+# 0 查看当前状态
+git status
+# 1 因当前在main分支，需保证当前代码与线上同步
+git pull 0_CreateCppProjectFromHelloWorld main
+# 2 新建分支 gtest
+git branch gtest
+# 3 切换到新分支 gtest 上
+git checkout gtest
+# 4 把本地分支推到远端，用于后面提交代码
+git push 0_CreateCppProjectFromHelloWorld gtest
+
+# 创建分支并切换到该分支的命令
+git checkout -b gtest
+
 # 创建目录来存放第三方库
 mkdir thirdpart && cd thirdpart
 
 # 下载 googletest 源码，下载时的版本为 v1.14.0
 git clone git@github.com:google/googletest.git
 
-# 创建一个 gtest 分支，等测试完毕后再合并到 main 分支
-# 1 因当前在main分支，需保证当前代码与线上同步
-git pull 0_CreateCppProjectFromHelloWorld mai
+
 ```
 
 ##### 项目目录
